@@ -2,12 +2,37 @@
 /*
 Plugin Name: KSAS Global Functions
 Plugin URI: http://krieger2.jhu.edu/comm/web/plugins/people
-Description: This plugin should be network activated.  Provides functions for creating the Academic Department Taxonomy, and formatting meta boxes, providing upload capability.
+Description: This plugin should be network activated.  Provides functions for creating the Academic Department Taxonomy, and formatting meta boxes, providing upload capability, and global security needs.
 Version: 1.0
 Author: Cara Peckens
 Author URI: mailto:cpeckens@jhu.edu
 License: GPL2
 */
+
+/*****************SECURITY AND PERFORMANCE FUNCTIONS*****************************/
+//Prevent login errors - attacker prevention
+add_filter('login_errors',create_ function('$a', "return null;"));
+
+//Block malicious queries - Based on http://perishablepress.com/press/2009/12/22/protect-wordpress-against-malicious-url-requests/
+
+global $user_ID;
+
+if($user_ID) {
+  if(!current_user_can('level_10')) {
+    if (strlen($_SERVER['REQUEST_URI']) > 255 ||
+      strpos($_SERVER['REQUEST_URI'], "eval(") ||
+      strpos($_SERVER['REQUEST_URI'], "CONCAT") ||
+      strpos($_SERVER['REQUEST_URI'], "UNION+SELECT") ||
+      strpos($_SERVER['REQUEST_URI'], "base64")) {
+        @header("HTTP/1.1 414 Request-URI Too Long");
+	@header("Status: 414 Request-URI Too Long");
+	@header("Connection: Close");
+	@exit;
+    }
+  }
+}
+
+/*****************TAXONOMIES*****************************/
 // registration code for academicdepartment taxonomy
 function register_academicdepartment_tax() {
 	$labels = array(
@@ -131,6 +156,7 @@ function add_affiliation_terms() {
 }
 add_action('init', 'add_affiliation_terms');
 
+/*****************CUSTOM POST TYPE UI FUNCTIONS*****************************/
 function ecpt_export_ui_scripts() {
 
 	global $ecpt_options;
