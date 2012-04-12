@@ -11,150 +11,177 @@ License: GPL2
 
 /*****************SECURITY AND PERFORMANCE FUNCTIONS*****************************/
 //Prevent login errors - attacker prevention
-add_filter('login_errors',create_ function('$a', "return null;"));
+	add_filter('login_errors', create_function('$a', "return null;"));
 
 //Block malicious queries - Based on http://perishablepress.com/press/2009/12/22/protect-wordpress-against-malicious-url-requests/
+	global $user_ID;
+	
+	if($user_ID) {
+	  if(!current_user_can('level_10')) {
+	    if (strlen($_SERVER['REQUEST_URI']) > 255 ||
+	      strpos($_SERVER['REQUEST_URI'], "eval(") ||
+	      strpos($_SERVER['REQUEST_URI'], "CONCAT") ||
+	      strpos($_SERVER['REQUEST_URI'], "UNION+SELECT") ||
+	      strpos($_SERVER['REQUEST_URI'], "base64")) {
+	        @header("HTTP/1.1 414 Request-URI Too Long");
+		@header("Status: 414 Request-URI Too Long");
+		@header("Connection: Close");
+		@exit;
+	    }
+	  }
+	}
+// remove junk from head
+	remove_action('wp_head', 'rsd_link');
+	remove_action('wp_head', 'wp_generator');
+	remove_action('wp_head', 'feed_links', 2);
+	remove_action('wp_head', 'index_rel_link');
+	remove_action('wp_head', 'wlwmanifest_link');
+	remove_action('wp_head', 'feed_links_extra', 3);
+	remove_action('wp_head', 'start_post_rel_link', 10, 0);
+	remove_action('wp_head', 'parent_post_rel_link', 10, 0);
+	remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0);
 
-global $user_ID;
-
-if($user_ID) {
-  if(!current_user_can('level_10')) {
-    if (strlen($_SERVER['REQUEST_URI']) > 255 ||
-      strpos($_SERVER['REQUEST_URI'], "eval(") ||
-      strpos($_SERVER['REQUEST_URI'], "CONCAT") ||
-      strpos($_SERVER['REQUEST_URI'], "UNION+SELECT") ||
-      strpos($_SERVER['REQUEST_URI'], "base64")) {
-        @header("HTTP/1.1 414 Request-URI Too Long");
-	@header("Status: 414 Request-URI Too Long");
-	@header("Connection: Close");
-	@exit;
+// remove version info from head and feeds
+    function complete_version_removal() {
+    	return '';
     }
-  }
-}
+    add_filter('the_generator', 'complete_version_removal');
+
+//removes admin bar from front end
+	add_filter( 'show_admin_bar', '__return_false' );
+
+//remove unneccessary classes for navigation menus
+	add_filter('nav_menu_css_class', 'ksasaca_css_attributes_filter', 100, 1);
+	add_filter('nav_menu_item_id', 'ksasaca_css_attributes_filter', 100, 1);
+	add_filter('page_css_class', 'ksasaca_css_attributes_filter', 100, 1);
+	function ksasaca_css_attributes_filter($var) {
+		 $newnavclasses = is_array($var) ? array_intersect($var, array('current-menu-item', 'current_page_item', 'current-page-ancestor', 'current-page-parent')) : '';
+		 return $newnavclasses;
+	}
 
 /*****************TAXONOMIES*****************************/
 // registration code for academicdepartment taxonomy
-function register_academicdepartment_tax() {
-	$labels = array(
-		'name' 					=> _x( 'Departments', 'taxonomy general name' ),
-		'singular_name' 		=> _x( 'Department', 'taxonomy singular name' ),
-		'add_new' 				=> _x( 'Add New Department', 'Department'),
-		'add_new_item' 			=> __( 'Add New Department' ),
-		'edit_item' 			=> __( 'Edit Department' ),
-		'new_item' 				=> __( 'New Department' ),
-		'view_item' 			=> __( 'View Department' ),
-		'search_items' 			=> __( 'Search Departments' ),
-		'not_found' 			=> __( 'No Department found' ),
-		'not_found_in_trash' 	=> __( 'No Department found in Trash' ),
-	);
+	function register_academicdepartment_tax() {
+		$labels = array(
+			'name' 					=> _x( 'Departments', 'taxonomy general name' ),
+			'singular_name' 		=> _x( 'Department', 'taxonomy singular name' ),
+			'add_new' 				=> _x( 'Add New Department', 'Department'),
+			'add_new_item' 			=> __( 'Add New Department' ),
+			'edit_item' 			=> __( 'Edit Department' ),
+			'new_item' 				=> __( 'New Department' ),
+			'view_item' 			=> __( 'View Department' ),
+			'search_items' 			=> __( 'Search Departments' ),
+			'not_found' 			=> __( 'No Department found' ),
+			'not_found_in_trash' 	=> __( 'No Department found in Trash' ),
+		);
+		
+		$pages = array('courses','people','profile','post');
+					
+		$args = array(
+			'labels' 			=> $labels,
+			'singular_label' 	=> __('Department'),
+			'public' 			=> true,
+			'show_ui' 			=> true,
+			'hierarchical' 		=> true,
+			'show_tagcloud' 	=> false,
+			'show_in_nav_menus' => false,
+			'rewrite' 			=> array('slug' => 'department', 'with_front' => false ),
+		 );
+		register_taxonomy('academicdepartment', $pages, $args);
+	}
+	add_action('init', 'register_academicdepartment_tax');
 	
-	$pages = array('courses','people','profile','post');
-				
-	$args = array(
-		'labels' 			=> $labels,
-		'singular_label' 	=> __('Department'),
-		'public' 			=> true,
-		'show_ui' 			=> true,
-		'hierarchical' 		=> true,
-		'show_tagcloud' 	=> false,
-		'show_in_nav_menus' => false,
-		'rewrite' 			=> array('slug' => 'department', 'with_front' => false ),
-	 );
-	register_taxonomy('academicdepartment', $pages, $args);
-}
-add_action('init', 'register_academicdepartment_tax');
-
-//Prepopulate choices
-function add_academicdepartment_terms() {
-	wp_insert_term('Anthropology', 'academicdepartment',  array('description'=> '','slug' => 'anthropology'));
-	wp_insert_term('Biology', 'academicdepartment',  array('description'=> '','slug' => 'bio'));
-	wp_insert_term('Biophysics', 'academicdepartment',  array('description'=> '','slug' => 'biophysics'));
-	wp_insert_term('Chemistry', 'academicdepartment',  array('description'=> '','slug' => 'chemistry'));
-	wp_insert_term('Classics', 'academicdepartment',  array('description'=> '','slug' => 'classics'));
-	wp_insert_term('Cognitive Science', 'academicdepartment',  array('description'=> '','slug' => 'cogsci'));
-	wp_insert_term('Earth and Planetary Sciences', 'academicdepartment',  array('description'=> '','slug' => 'eps'));
-	wp_insert_term('Economics', 'academicdepartment',  array('description'=> '','slug' => 'econ'));
-	wp_insert_term('English', 'academicdepartment',  array('description'=> '','slug' => 'english'));
-	wp_insert_term('German and Romance Languages', 'academicdepartment',  array('description'=> '','slug' => 'grll'));
-	wp_insert_term('History', 'academicdepartment',  array('description'=> '','slug' => 'history'));
-	wp_insert_term('History of Art', 'academicdepartment',  array('description'=> '','slug' => 'arthist'));
-	wp_insert_term('History of Science and Technology', 'academicdepartment',  array('description'=> '','slug' => 'host'));
-	wp_insert_term('Humanities', 'academicdepartment',  array('description'=> '','slug' => 'humanities'));
-	wp_insert_term('Mathematics', 'academicdepartment',  array('description'=> '','slug' => 'math'));
-	wp_insert_term('Near Eastern Studies', 'academicdepartment',  array('description'=> '','slug' => 'neareast'));
-	wp_insert_term('Philosophy', 'academicdepartment',  array('description'=> '','slug' => 'philosophy'));
-	wp_insert_term('Physics and Astronomy', 'academicdepartment',  array('description'=> '','slug' => 'physics'));
-	wp_insert_term('Political Science', 'academicdepartment',  array('description'=> '','slug' => 'polisci'));
-	wp_insert_term('Psychological and Brain Sciences', 'academicdepartment',  array('description'=> '','slug' => 'pbs'));
-	wp_insert_term('Sociology', 'academicdepartment',  array('description'=> '','slug' => 'soc'));
-	wp_insert_term('Writing Seminars', 'academicdepartment',  array('description'=> '','slug' => 'writing'));
-}
-add_action('init', 'add_academicdepartment_terms');
+	//Prepopulate choices
+	function add_academicdepartment_terms() {
+		wp_insert_term('Anthropology', 'academicdepartment',  array('description'=> '','slug' => 'anthropology'));
+		wp_insert_term('Biology', 'academicdepartment',  array('description'=> '','slug' => 'bio'));
+		wp_insert_term('Biophysics', 'academicdepartment',  array('description'=> '','slug' => 'biophysics'));
+		wp_insert_term('Chemistry', 'academicdepartment',  array('description'=> '','slug' => 'chemistry'));
+		wp_insert_term('Classics', 'academicdepartment',  array('description'=> '','slug' => 'classics'));
+		wp_insert_term('Cognitive Science', 'academicdepartment',  array('description'=> '','slug' => 'cogsci'));
+		wp_insert_term('Earth and Planetary Sciences', 'academicdepartment',  array('description'=> '','slug' => 'eps'));
+		wp_insert_term('Economics', 'academicdepartment',  array('description'=> '','slug' => 'econ'));
+		wp_insert_term('English', 'academicdepartment',  array('description'=> '','slug' => 'english'));
+		wp_insert_term('German and Romance Languages', 'academicdepartment',  array('description'=> '','slug' => 'grll'));
+		wp_insert_term('History', 'academicdepartment',  array('description'=> '','slug' => 'history'));
+		wp_insert_term('History of Art', 'academicdepartment',  array('description'=> '','slug' => 'arthist'));
+		wp_insert_term('History of Science and Technology', 'academicdepartment',  array('description'=> '','slug' => 'host'));
+		wp_insert_term('Humanities', 'academicdepartment',  array('description'=> '','slug' => 'humanities'));
+		wp_insert_term('Mathematics', 'academicdepartment',  array('description'=> '','slug' => 'math'));
+		wp_insert_term('Near Eastern Studies', 'academicdepartment',  array('description'=> '','slug' => 'neareast'));
+		wp_insert_term('Philosophy', 'academicdepartment',  array('description'=> '','slug' => 'philosophy'));
+		wp_insert_term('Physics and Astronomy', 'academicdepartment',  array('description'=> '','slug' => 'physics'));
+		wp_insert_term('Political Science', 'academicdepartment',  array('description'=> '','slug' => 'polisci'));
+		wp_insert_term('Psychological and Brain Sciences', 'academicdepartment',  array('description'=> '','slug' => 'pbs'));
+		wp_insert_term('Sociology', 'academicdepartment',  array('description'=> '','slug' => 'soc'));
+		wp_insert_term('Writing Seminars', 'academicdepartment',  array('description'=> '','slug' => 'writing'));
+	}
+	add_action('init', 'add_academicdepartment_terms');
 
 // registration code for affiliation taxonomy
-function register_affiliation_tax() {
-	$labels = array(
-		'name' 					=> _x( 'Affiliations', 'taxonomy general name' ),
-		'singular_name' 		=> _x( 'Affiliation', 'taxonomy singular name' ),
-		'add_new' 				=> _x( 'Add New Affiliation', 'Affiliation'),
-		'add_new_item' 			=> __( 'Add New Affiliation' ),
-		'edit_item' 			=> __( 'Edit Affiliation' ),
-		'new_item' 				=> __( 'New Affiliation' ),
-		'view_item' 			=> __( 'View Affiliation' ),
-		'search_items' 			=> __( 'Search Affiliations' ),
-		'not_found' 			=> __( 'No Affiliation found' ),
-		'not_found_in_trash' 	=> __( 'No Affiliation found in Trash' ),
-	);
+	function register_affiliation_tax() {
+		$labels = array(
+			'name' 					=> _x( 'Affiliations', 'taxonomy general name' ),
+			'singular_name' 		=> _x( 'Affiliation', 'taxonomy singular name' ),
+			'add_new' 				=> _x( 'Add New Affiliation', 'Affiliation'),
+			'add_new_item' 			=> __( 'Add New Affiliation' ),
+			'edit_item' 			=> __( 'Edit Affiliation' ),
+			'new_item' 				=> __( 'New Affiliation' ),
+			'view_item' 			=> __( 'View Affiliation' ),
+			'search_items' 			=> __( 'Search Affiliations' ),
+			'not_found' 			=> __( 'No Affiliation found' ),
+			'not_found_in_trash' 	=> __( 'No Affiliation found in Trash' ),
+		);
+		
+		$pages = array('people');
+					
+		$args = array(
+			'labels' 			=> $labels,
+			'singular_label' 	=> __('Affiliation'),
+			'public' 			=> true,
+			'show_ui' 			=> true,
+			'hierarchical' 		=> true,
+			'show_tagcloud' 	=> false,
+			'show_in_nav_menus' => false,
+			'rewrite' 			=> array('slug' => 'affiliation', 'with_front' => false ),
+		 );
+		register_taxonomy('affiliation', $pages, $args);
+	}
+	add_action('init', 'register_affiliation_tax');
 	
-	$pages = array('people');
-				
-	$args = array(
-		'labels' 			=> $labels,
-		'singular_label' 	=> __('Affiliation'),
-		'public' 			=> true,
-		'show_ui' 			=> true,
-		'hierarchical' 		=> true,
-		'show_tagcloud' 	=> false,
-		'show_in_nav_menus' => false,
-		'rewrite' 			=> array('slug' => 'affiliation', 'with_front' => false ),
-	 );
-	register_taxonomy('affiliation', $pages, $args);
-}
-add_action('init', 'register_affiliation_tax');
-
-function add_affiliation_terms() {
-	wp_insert_term('Africana Studies', 'affiliation',  array('slug' => 'africana'));
-	wp_insert_term('Archaeology', 'affiliation',  array('slug' => 'archaeology'));	
-	wp_insert_term('Astrophysical Sciences', 'affiliation',  array('slug' => 'astro'));
-	wp_insert_term('Behavioral Biology', 'affiliation',  array('slug' => 'behavbio'));
-	wp_insert_term('Biophysical Research', 'affiliation',  array('slug' => 'biophys'));
-	wp_insert_term('Financial Economics', 'affiliation',  array('slug' => 'cfe'));
-	wp_insert_term('China STEM', 'affiliation',  array('slug' => 'chinastem'));
-	wp_insert_term('CMDB Program', 'affiliation',  array('slug' => 'cmdb'));
-	wp_insert_term('East Asian', 'affiliation',  array('slug' => 'eastasian'));
-	wp_insert_term('Embryology', 'affiliation',  array('slug' => 'embryo'));
-	wp_insert_term('Expository Writing', 'affiliation',  array('slug' => 'ewp'));
-	wp_insert_term('Film and Media', 'affiliation',  array('slug' => 'film'));
-	wp_insert_term('Applied Economics', 'affiliation',  array('slug' => 'iae'));
-	wp_insert_term('International Studies', 'affiliation',  array('slug' => 'international'));
-	wp_insert_term('Jewish Studies', 'affiliation',  array('slug' => 'jewish'));
-	wp_insert_term('Language Education', 'affiliation',  array('slug' => 'cledu'));
-	wp_insert_term('Latin American Studies', 'affiliation',  array('slug' => 'plas'));
-	wp_insert_term('Materials Research', 'affiliation',  array('slug' => 'materials'));
-	wp_insert_term('Mind Brain Institute', 'affiliation',  array('slug' => 'mindbrain'));
-	wp_insert_term('Modern German Thought', 'affiliation',  array('slug' => 'maxkade'));
-	wp_insert_term('Museums and Society', 'affiliation',  array('slug' => 'museums'));
-	wp_insert_term('Neuroscience', 'affiliation',  array('slug' => 'neuroscience'));
-	wp_insert_term('Odyssey', 'affiliation',  array('slug' => 'odyssey'));
-	wp_insert_term('Osher Lifelong', 'affiliation',  array('slug' => 'osher'));
-	wp_insert_term('Policy Studies', 'affiliation',  array('slug' => 'policystudies'));
-	wp_insert_term('Premodern Europe', 'affiliation',  array('slug' => 'singleton'));
-	wp_insert_term('Public Health', 'affiliation',  array('slug' => 'publichealth'));
-	wp_insert_term('Theatre Arts', 'affiliation',  array('slug' => 'theatre'));
-	wp_insert_term('Women Gender and Sexuality', 'affiliation',  array('slug' => 'wgs'));
-	wp_insert_term('Writing Center', 'affiliation',  array('slug' => 'writingcenter'));
-}
-add_action('init', 'add_affiliation_terms');
+	function add_affiliation_terms() {
+		wp_insert_term('Africana Studies', 'affiliation',  array('slug' => 'africana'));
+		wp_insert_term('Archaeology', 'affiliation',  array('slug' => 'archaeology'));	
+		wp_insert_term('Astrophysical Sciences', 'affiliation',  array('slug' => 'astro'));
+		wp_insert_term('Behavioral Biology', 'affiliation',  array('slug' => 'behavbio'));
+		wp_insert_term('Biophysical Research', 'affiliation',  array('slug' => 'biophys'));
+		wp_insert_term('Financial Economics', 'affiliation',  array('slug' => 'cfe'));
+		wp_insert_term('China STEM', 'affiliation',  array('slug' => 'chinastem'));
+		wp_insert_term('CMDB Program', 'affiliation',  array('slug' => 'cmdb'));
+		wp_insert_term('East Asian', 'affiliation',  array('slug' => 'eastasian'));
+		wp_insert_term('Embryology', 'affiliation',  array('slug' => 'embryo'));
+		wp_insert_term('Expository Writing', 'affiliation',  array('slug' => 'ewp'));
+		wp_insert_term('Film and Media', 'affiliation',  array('slug' => 'film'));
+		wp_insert_term('Applied Economics', 'affiliation',  array('slug' => 'iae'));
+		wp_insert_term('International Studies', 'affiliation',  array('slug' => 'international'));
+		wp_insert_term('Jewish Studies', 'affiliation',  array('slug' => 'jewish'));
+		wp_insert_term('Language Education', 'affiliation',  array('slug' => 'cledu'));
+		wp_insert_term('Latin American Studies', 'affiliation',  array('slug' => 'plas'));
+		wp_insert_term('Materials Research', 'affiliation',  array('slug' => 'materials'));
+		wp_insert_term('Mind Brain Institute', 'affiliation',  array('slug' => 'mindbrain'));
+		wp_insert_term('Modern German Thought', 'affiliation',  array('slug' => 'maxkade'));
+		wp_insert_term('Museums and Society', 'affiliation',  array('slug' => 'museums'));
+		wp_insert_term('Neuroscience', 'affiliation',  array('slug' => 'neuroscience'));
+		wp_insert_term('Odyssey', 'affiliation',  array('slug' => 'odyssey'));
+		wp_insert_term('Osher Lifelong', 'affiliation',  array('slug' => 'osher'));
+		wp_insert_term('Policy Studies', 'affiliation',  array('slug' => 'policystudies'));
+		wp_insert_term('Premodern Europe', 'affiliation',  array('slug' => 'singleton'));
+		wp_insert_term('Public Health', 'affiliation',  array('slug' => 'publichealth'));
+		wp_insert_term('Theatre Arts', 'affiliation',  array('slug' => 'theatre'));
+		wp_insert_term('Women Gender and Sexuality', 'affiliation',  array('slug' => 'wgs'));
+		wp_insert_term('Writing Center', 'affiliation',  array('slug' => 'writingcenter'));
+	}
+	add_action('init', 'add_affiliation_terms');
 
 /*****************CUSTOM POST TYPE UI FUNCTIONS*****************************/
 function ecpt_export_ui_scripts() {
