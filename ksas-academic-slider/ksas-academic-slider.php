@@ -140,7 +140,7 @@ function ecpt_show_sliderinfo_2_box()	{
 				echo '<input type="text" class="ecpt_datepicker" name="' . $field['id'] . '" id="' . $field['id'] . '" value="'. $value . '" size="30" style="width:97%" />' . '' . $field['desc'];
 				break;
 			case 'upload':
-				echo '<input type="text" class="ecpt_upload_field" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:80%" /><input class="ecpt_upload_image_button" type="button" value="Upload Image" /><br/>', '', $field['desc'];
+				echo '<input type="text" class="ecpt_upload_field" name="', $field['id'], '" id="', $field['id'], '" value="', $meta ? $meta : $field['std'], '" size="30" style="width:80%" /><input class="ecpt_upload_image_button" type="button" value="Upload" /><br/>', '', $field['desc'];
 				break;
 			case 'textarea':
 			
@@ -270,9 +270,6 @@ function ecpt_sliderinfo_2_save($post_id) {
 				$new = ecpt_format_date($new);
 				update_post_meta($post_id, $field['id'], $new);
 			} else {
-				if(is_string($new)) {
-					$new = esc_attr($new);
-				} 
 				update_post_meta($post_id, $field['id'], $new);
 				
 				

@@ -198,7 +198,7 @@ function ecpt_export_ui_scripts() {
 
 				$('.ecpt_upload_image_button').live('click', function() {
 				window.formfield = $('.ecpt_upload_field',$(this).parent());
-					tb_show('', 'media-upload.php?type=file&TB_iframe=true');
+            	tb_show('', 'media-upload.php?post_id='+post_vars.post_id+'&TB_iframe=true');
 									return false;
 					});
 
@@ -304,7 +304,15 @@ function ecpt_export_ui_scripts() {
 }
 
 function ecpt_export_datepicker_ui_scripts() {
-	global $ecpt_base_dir;
+	global $ecpt_base_dir, $post;
+	wp_enqueue_script('thickbox');
+	wp_enqueue_script('media-upload');
+	wp_enqueue_script('ecpt-ui', $ecpt_base_dir . 'includes/js/ui-scripts.js', array('jquery')); 
+	wp_localize_script( 'ecpt-ui', 'post_vars', 
+		array( 
+			'post_id' => $post->ID
+		) 
+	);
 	wp_enqueue_script('jquery-ui-datepicker');
 	wp_enqueue_script('jquery-ui-slider');
 }
