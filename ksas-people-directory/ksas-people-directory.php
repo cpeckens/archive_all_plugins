@@ -359,9 +359,6 @@ function ecpt_personaldetails_3_save($post_id) {
 				$new = ecpt_format_date($new);
 				update_post_meta($post_id, $field['id'], $new);
 			} else {
-				if(is_string($new)) {
-					$new = esc_attr($new);
-				} 
 				update_post_meta($post_id, $field['id'], $new);
 				
 				
@@ -613,9 +610,6 @@ function ecpt_facultyinformation_4_save($post_id) {
 				$new = ecpt_format_date($new);
 				update_post_meta($post_id, $field['id'], $new);
 			} else {
-				if(is_string($new)) {
-					$new = esc_attr($new);
-				} 
 				update_post_meta($post_id, $field['id'], $new);
 				
 				
@@ -837,9 +831,6 @@ function ecpt_uploadsforprofile_5_save($post_id) {
 				$new = ecpt_format_date($new);
 				update_post_meta($post_id, $field['id'], $new);
 			} else {
-				if(is_string($new)) {
-					$new = esc_attr($new);
-				} 
 				update_post_meta($post_id, $field['id'], $new);
 				
 				
@@ -1111,9 +1102,6 @@ function ecpt_jobcandidatedetails_6_save($post_id) {
 				$new = ecpt_format_date($new);
 				update_post_meta($post_id, $field['id'], $new);
 			} else {
-				if(is_string($new)) {
-					$new = esc_attr($new);
-				} 
 				update_post_meta($post_id, $field['id'], $new);
 				
 				
