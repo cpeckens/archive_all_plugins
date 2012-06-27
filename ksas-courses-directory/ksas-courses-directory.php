@@ -36,7 +36,16 @@ License: GPL2
 			'publicly_queryable'=> true,
 			'query_var'			=> true,
 			'capability_type'   => 'course',
-			'map_meta_cap'      => true,			
+			'capabilities' => array(
+				'publish_posts' => 'publish_courses',
+				'edit_posts' => 'edit_courses',
+				'edit_others_posts' => 'edit_others_courses',
+				'delete_posts' => 'delete_courses',
+				'delete_others_posts' => 'delete_others_courses',
+				'read_private_posts' => 'read_private_courses',
+				'edit_post' => 'edit_course',
+				'delete_post' => 'delete_course',
+				'read_post' => 'read_course',),			
 			'has_archive' 		=> false,
 			'hierarchical' 		=> false,
 			'rewrite' 			=> array('slug' => 'courses', 'with_front' => false ),
@@ -234,9 +243,9 @@ function ecpt_show_coursedetails_1_box()	{
 				echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />&nbsp;';
 				echo $field['desc'];
 				break;
-			case 'slider':
+			case 'courser':
 				echo '<input type="text" rel="' . $field['max'] . '" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . $meta . '" size="1" style="float: left; margin-right: 5px" />';
-				echo '<div class="ecpt-slider" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
+				echo '<div class="ecpt-courser" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
 				echo '<div style="width: 100%; clear: both;">' . $field['desc'] . '</div>';
 				break;
 			case 'repeatable' :

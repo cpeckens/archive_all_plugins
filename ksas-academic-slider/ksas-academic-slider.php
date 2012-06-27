@@ -26,7 +26,7 @@ License: GPL2
 		
 		$taxonomies = array();
 		
-		$supports = array('editor','revisions');
+		$supports = array('title', 'editor','revisions');
 		
 		$post_type_args = array(
 			'labels' 			=> $labels,
@@ -36,7 +36,16 @@ License: GPL2
 			'publicly_queryable'=> true,
 			'query_var'			=> true,
 			'capability_type'   => 'slide',
-			'map_meta_cap'      => true,			
+			'capabilities' => array(
+				'publish_posts' => 'publish_slides',
+				'edit_posts' => 'edit_slides',
+				'edit_others_posts' => 'edit_others_slides',
+				'delete_posts' => 'delete_slides',
+				'delete_others_posts' => 'delete_others_slides',
+				'read_private_posts' => 'read_private_slides',
+				'edit_post' => 'edit_slide',
+				'delete_post' => 'delete_slide',
+				'read_post' => 'read_slide',),			
 			'has_archive' 		=> false,
 			'hierarchical' 		=> false,
 			'rewrite' 			=> array('slug' => 'slider', 'with_front' => false ),

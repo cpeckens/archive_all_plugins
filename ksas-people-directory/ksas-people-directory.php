@@ -2,7 +2,7 @@
 /*
 Plugin Name: KSAS People Directory
 Plugin URI: http://krieger2.jhu.edu/comm/web/plugins/people
-Description: Creates a custom post type for people.  Use only for faculty, staff and job market candidates.  To create a directory page, create a page title either Faculty, Staff, or Job Market Candidates. Then choose 'Directory' from the page template drop-down.  This plugin also creates a widget to display Job Candidates in the sidebar. Please remember to designate your Academic Department and Role for proper search indexing.
+Description: Creates a custom post type for people.  Use only for faculty, staff and job market candidates.  To create a directory page, create a page with the URL of either faculty, staff, or job-market-candidates. Then choose 'Directory' from the page template drop-down.  This plugin also creates a widget to display Job Candidates in the sidebar. Please remember to designate your Academic Department and Role for proper search indexing.
 Version: 1.0
 Author: Cara Peckens
 Author URI: mailto:cpeckens@jhu.edu
@@ -37,7 +37,16 @@ License: GPL2
 			'publicly_queryable'=> true,
 			'query_var'			=> true,
 			'capability_type'   => 'person',
-			'map_meta_cap'      => true,			
+			'capabilities' => array(
+				'publish_posts' => 'publish_persons',
+				'edit_posts' => 'edit_persons',
+				'edit_others_posts' => 'edit_others_persons',
+				'delete_posts' => 'delete_persons',
+				'delete_others_posts' => 'delete_others_persons',
+				'read_private_posts' => 'read_private_persons',
+				'edit_post' => 'edit_person',
+				'delete_post' => 'delete_person',
+				'read_post' => 'read_person',),			
 			'has_archive' 		=> false,
 			'hierarchical' 		=> false,
 			'rewrite' 			=> array('slug' => 'directory', 'with_front' => false ),
@@ -267,9 +276,9 @@ function ecpt_show_personaldetails_3_box()	{
 				echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />&nbsp;';
 				echo $field['desc'];
 				break;
-			case 'slider':
+			case 'personr':
 				echo '<input type="text" rel="' . $field['max'] . '" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . $meta . '" size="1" style="float: left; margin-right: 5px" />';
-				echo '<div class="ecpt-slider" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
+				echo '<div class="ecpt-personr" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
 				echo '<div style="width: 100%; clear: both;">' . $field['desc'] . '</div>';
 				break;
 			case 'repeatable' :
@@ -518,9 +527,9 @@ function ecpt_show_facultyinformation_4_box()	{
 				echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />&nbsp;';
 				echo $field['desc'];
 				break;
-			case 'slider':
+			case 'personr':
 				echo '<input type="text" rel="' . $field['max'] . '" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . $meta . '" size="1" style="float: left; margin-right: 5px" />';
-				echo '<div class="ecpt-slider" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
+				echo '<div class="ecpt-personr" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
 				echo '<div style="width: 100%; clear: both;">' . $field['desc'] . '</div>';
 				break;
 			case 'repeatable' :
@@ -739,9 +748,9 @@ function ecpt_show_uploadsforprofile_5_box()	{
 				echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />&nbsp;';
 				echo $field['desc'];
 				break;
-			case 'slider':
+			case 'personr':
 				echo '<input type="text" rel="' . $field['max'] . '" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . $meta . '" size="1" style="float: left; margin-right: 5px" />';
-				echo '<div class="ecpt-slider" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
+				echo '<div class="ecpt-personr" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
 				echo '<div style="width: 100%; clear: both;">' . $field['desc'] . '</div>';
 				break;
 			case 'repeatable' :
@@ -1010,9 +1019,9 @@ function ecpt_show_jobcandidatedetails_6_box()	{
 				echo '<input type="checkbox" name="', $field['id'], '" id="', $field['id'], '"', $meta ? ' checked="checked"' : '', ' />&nbsp;';
 				echo $field['desc'];
 				break;
-			case 'slider':
+			case 'personr':
 				echo '<input type="text" rel="' . $field['max'] . '" name="' . $field['id'] . '" id="' . $field['id'] . '" value="' . $meta . '" size="1" style="float: left; margin-right: 5px" />';
-				echo '<div class="ecpt-slider" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
+				echo '<div class="ecpt-personr" rel="' . $field['id'] . '" style="float: left; width: 60%; margin: 5px 0 0 0;"></div>';		
 				echo '<div style="width: 100%; clear: both;">' . $field['desc'] . '</div>';
 				break;
 			case 'repeatable' :

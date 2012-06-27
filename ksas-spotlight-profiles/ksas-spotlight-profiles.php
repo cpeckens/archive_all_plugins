@@ -37,7 +37,16 @@ License: GPL2
 			'publicly_queryable'=> true,
 			'query_var'			=> true,
 			'capability_type'   => 'profile',
-			'map_meta_cap'      => true,			
+			'capabilities' => array(
+				'publish_posts' => 'publish_profiles',
+				'edit_posts' => 'edit_profiles',
+				'edit_others_posts' => 'edit_others_profiles',
+				'delete_posts' => 'delete_profiles',
+				'delete_others_posts' => 'delete_others_profiles',
+				'read_private_posts' => 'read_private_profiles',
+				'edit_post' => 'edit_profile',
+				'delete_post' => 'delete_profile',
+				'read_post' => 'read_profile',),			
 			'has_archive' 		=> false,
 			'hierarchical' 		=> false,
 			'rewrite' 			=> array('slug' => 'profiles', 'with_front' => false ),
@@ -81,8 +90,8 @@ function register_profiletype_tax() {
 add_action('init', 'register_profiletype_tax');								
 
 function add_profiletype_terms() {
-	wp_insert_term('undergraduate', 'profiletype',  array('description'=> 'Undergraduate Student Profile','slug' => 'undergraduate'));
-	wp_insert_term('graduate', 'profiletype',  array('description'=> 'Graduate Student Profile','slug' => 'graduate'));
+	wp_insert_term('undergraduate', 'profiletype',  array('description'=> 'Undergraduate Student Profile','slug' => 'undergraduate-profile'));
+	wp_insert_term('graduate', 'profiletype',  array('description'=> 'Graduate Student Profile','slug' => 'graduate-profile'));
 	wp_insert_term('spotlight', 'profiletype',  array('description'=> 'Faculty or Spotlight Feature','slug' => 'spotlight'));
 }
 add_action('init', 'add_profiletype_terms');
@@ -514,7 +523,7 @@ class Undergrad_Profile_Widget extends WP_Widget {
 	
 
 		global $post; ?>
-		<?php $undergrad_profile_query = new WP_Query('post-type=profiles&profiletype=undergraduate&orderby=rand&posts_per_page=1'); ?>
+		<?php $undergrad_profile_query = new WP_Query('post-type=profiles&profiletype=undergraduate-profile&orderby=rand&posts_per_page=1'); ?>
 					<?php while ($undergrad_profile_query->have_posts()) : $undergrad_profile_query->the_post(); ?>           
     	<div class="profile_box">
     	<div class="spotlight"></div>
@@ -571,7 +580,7 @@ class Graduate_Profile_Widget extends WP_Widget {
 	
 
 		global $post; ?>
-		<?php $graduate_profile_query = new WP_Query('post-type=profile&profiletype=graduate&orderby=rand&posts_per_page=1'); ?>
+		<?php $graduate_profile_query = new WP_Query('post-type=profile&profiletype=graduate-profile&orderby=rand&posts_per_page=1'); ?>
 					<?php while ($graduate_profile_query->have_posts()) : $graduate_profile_query->the_post(); ?>
          <?php // get_the_ID(); ?>
          <?php //$profileid = $post->ID; ?>               
