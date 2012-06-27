@@ -19,22 +19,6 @@ function shibboleth_admin_panels() {
 			__('Shibboleth', 'shibboleth'), 8, 'shibboleth-options', 'shibboleth_options_page' );
 	}
 
-	add_contextual_help($hookname, shibboleth_help_text());
-}
-
-/**
- * Add Shibboleth links to the "help" pull down panel.
- */
-function shibboleth_help_text() {
-	$text = '
-	<ul>
-		<li><a href="https://spaces.internet2.edu/display/SHIB/" target="_blank">' . __('Shibboleth 1.3 Wiki', 'shibboleth') . '</a></li>
-		<li><a href="https://spaces.internet2.edu/display/SHIB2/" target="_blank">' . __('Shibboleth 2 Wiki', 'shibboleth') . '</a></li>
-		<li><a href="http://shibboleth.internet2.edu/lists.html" target="_blank">' . __('Shibboleth Mailing Lists', 'shibboleth') . '</a></li>
-	</ul>';
-	
-	return apply_filters( 'shibboleth_help_text_filter', $text );
-
 }
 
 
@@ -291,7 +275,7 @@ if ( apply_filters('shibboleth_role_mapping_override',false) === false ):
 					foreach ($wp_roles->role_names as $key => $name) {
 						echo'
 						<tr valign="top">
-							<th scope="row">' . _c($name) . '</th>
+							<th scope="row">' . _x($name, 'name') . '</th>
 							<td><input type="text" id="role_'.$key.'_header" name="shibboleth_roles['.$key.'][header]" value="' . @$shib_roles[$key]['header'] . '" style="width: 100%" /></td>
 							<td><input type="text" id="role_'.$key.'_value" name="shibboleth_roles['.$key.'][value]" value="' . @$shib_roles[$key]['value'] . '" style="width: 100%" /></td>
 						</tr>';
@@ -311,7 +295,7 @@ if ( apply_filters('shibboleth_role_mapping_override',false) === false ):
 <?php
 			foreach ($wp_roles->role_names as $key => $name) {
 				echo '
-						<option value="' . $key . '"' . ($shib_roles['default'] == $key ? ' selected="selected"' : '') . '>' . _c($name) . '</option>';
+						<option value="' . $key . '"' . ($shib_roles['default'] == $key ? ' selected="selected"' : '') . '>' . _x($name, 'name') . '</option>';
 			}
 ?>
 						</select>
