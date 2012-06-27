@@ -185,16 +185,39 @@ ure_showMessage($mess);
       el.style.visibility = 'visible';
     }
   }
+  // end of ure_show_greetings()
+  
+  function ure_select_all(selected) {
+    
+    var form = document.getElementById('ure_form');
+    for (i=0; i<form.elements.length; i++) {
+      el = form.elements[i];
+      if (el.type!='checkbox') { 
+        continue;
+      }  
+      if (el.name=='ure_caps_readable' || el.name=='ure_show_deprecated_caps') {
+        continue;
+      }
+      if (selected>=0) {
+        form.elements[i].checked = selected;      
+      } else {
+        form.elements[i].checked = !form.elements[i].checked;      
+      }
+    }
+    
+  }
+  // end of ure_select_all()
+  
+  
 </script>
-				<div id="poststuff" class="metabox-holder has-right-sidebar">
-					<div class="inner-sidebar" >
-						<div id="side-sortables" class="meta-box-sortables ui-sortable" style="position:relative;">
+<div id="poststuff">
+					<div class="ure-sidebar" >
 									<?php ure_displayBoxStart(__('About this Plugin:', 'ure')); ?>
 											<a class="ure_rsb_link" style="background-image:url(<?php echo $shinephpFavIcon; ?>);" target="_blank" href="http://www.shinephp.com/"><?php _e("Author's website", 'ure'); ?></a>
 											<a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/user-role-editor-icon.png'; ?>);" target="_blank" href="http://www.shinephp.com/user-role-editor-wordpress-plugin/"><?php _e('Plugin webpage', 'ure'); ?></a>
 											<a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/changelog-icon.png'; ?>);" target="_blank" href="http://www.shinephp.com/user-role-editor-wordpress-plugin/#changelog"><?php _e('Changelog', 'ure'); ?></a>
 											<a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/faq-icon.png'; ?>);" target="_blank" href="http://www.shinephp.com/user-role-editor-wordpress-plugin/#faq"><?php _e('FAQ', 'ure'); ?></a>
-                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/greetings.png'; ?>);" onclick="ure_show_greetings()" href="#">Greetings</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/greetings.png'; ?>);" onclick="ure_show_greetings()" href="#"><?php _e('Greetings', 'ure'); ?></a>
                       <hr />
                       <div style="text-align: center;">
                         <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -215,31 +238,33 @@ ure_showMessage($mess);
                         <li><a href="http://www.eastwoodzhao.com" title="www.eastwoodzhao.com" target="new">Eastwood</a></li>
                       </ul>
 									<?php ure_displayBoxEnd();?>
-                      <div id="ure_greetings" style="visibility: hidden;">    
+                      <div id="ure_greetings" style="clear: left; float: left; visibility: hidden;">    
                   <?php ure_displayBoxStart(__('Greetings:','ure')); ?>
 											<a class="ure_rsb_link" style="background-image:url(<?php echo $shinephpFavIcon; ?>);" target="_blank" title="<?php _e("It's me, the author", 'ure'); ?>" href="http://www.shinephp.com/">Vladimir</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/marsis.png'; ?>)" target="_blank" title="<?php _e("For the help with Belorussian translation", 'ure'); ?>" href="http://pc.de">Marsis G.</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/rafael.png'; ?>)" target="_blank" title="<?php _e("For the help with Brasilian translation", 'ure'); ?>" href="http://www.arquiteturailustrada.com.br/">Rafael Galdencio</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/jackytsu.png'; ?>)" target="_blank" title="<?php _e("For the help with Chinese translation", 'ure'); ?>" href="http://www.jackytsu.com">Jackytsu</a>
-                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/remi.png'; ?>)" target="_blank" title="<?php _e("For the help with Dutch translation", 'ure'); ?>" href="http://www.remisan.be">Rémi Bruggeman</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/ivaldi.png'; ?>)" target="_blank" title="<?php _e("For the help with Dutch translation", 'ure'); ?>" href="http://www.ivaldi.nl">Frank Groeneveld</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/lauri.png'; ?>)" target="_blank" title="<?php _e("For the help with Finnish translation", 'ure'); ?>" href="http://www.viidakkorumpu.fi">Lauri Merisaari</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/presse-et-multimedia.png'; ?>)" target="_blank" title="<?php _e("For the help with French translation", 'ure'); ?>" href="http://presse-et-multimedia.fr/blog/">Presse et Multimedia</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/whiler.png'; ?>)" target="_blank" title="<?php _e("For the help with French translation", 'ure'); ?>" href="http://blogs.wittwer.fr/whiler/">Whiler</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/peter.png'; ?>)" target="_blank" title="<?php _e("For the help with German translation", 'ure'); ?>" href="http://www.red-socks-reinbek.de">Peter</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/aryo.png'; ?>)" target="_blank" title="<?php _e("For the help with Hebrew translation", 'ure'); ?>" href="http://www.aryo.co.il/">ARYO Digital</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/sagive.png'; ?>)" target="_blank" title="<?php _e("For the help with Hebrew translation", 'ure'); ?>" href="http://www.sagive.co.il/">Sagive</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/outshine.png'; ?>)" target="_blank" title="<?php _e("For the help with Hindi translation", 'ure'); ?>" href="http://outshinesolutions.com">Outshine Solutions</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/blacksnail.png'; ?>)" target="_blank" title="<?php _e("For the help with Hungarian translation", 'ure'); ?>" href="http://www.blacksnail.hu">István</a>
-                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/venezialog.png'; ?>)" target="_blank" title="<?php _e("For the help with Italian translation", 'ure'); ?>" href="http://venezialog.net">Umberto Sartori</a>
-                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/talksina.png'; ?>)" target="_blank" title="<?php _e("For the help with Italian translation", 'ure'); ?>" href="http://www.iadkiller.org">Talksina</a>
-                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/alessandro.png'; ?>);" target="_blank" title="<?php _e("For the help with Italian translation",'pgc');?>" href="http://technodin.org">Alessandro Mariani</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/tristano.png'; ?>);" target="_blank" title="<?php _e("For the help with Italian translation",'pgc');?>" href="http://www.zenfactor.org ">Tristano Ajmone</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/venezialog.png'; ?>)" target="_blank" title="<?php _e("For the help with Italian translation", 'ure'); ?>" href="http://venezialog.net">Umberto Sartori</a>                                            
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/technologjp.png'; ?>)" target="_blank" title="<?php _e("For the help with Japanese translation", 'ure'); ?>" href="http://technolog.jp">Technolog.jp</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/host1free.png'; ?>)" target="_blank" title="<?php _e("For the help with Lithuanian translation", 'ure'); ?>" href="http://host1free.com">Vincent G</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/parsa.png'; ?>)" target="_blank" title="<?php _e("For the help with Persian translation", 'ure'); ?>" href="http://parsa.ws">Parsa</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/good-life.png'; ?>)" target="_blank" title="<?php _e("For the help with Persian translation", 'ure'); ?>" href="http://good-life.ir">Good Life</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/tagsite.png'; ?>)" target="_blank" title="<?php _e("For the help with Polish translation", 'ure'); ?>" href="http://www.tagsite.eu">TagSite</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/infomed.png'; ?>)" target="_blank" title="<?php _e("For the help with Spanish translation", 'ure'); ?>" href="http://www.sld.cu">Victor Ricardo Díaz (INFOMED)</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/dario.png'; ?>)" target="_blank" title="<?php _e("For the help with Spanish translation", 'ure'); ?>" href="http://www.darioferrer.com">Dario  Ferrer</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/andreas.png'; ?>)" target="_blank" title="<?php _e("For the updated Swedish translation", 'ure'); ?>" href="http://adevade.com/">Andréas Lundgren</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/christer.png'; ?>)" target="_blank" title="<?php _e("For the help with Swedish translation", 'ure'); ?>" href="http://www.startlinks.eu">Christer Dahlbacka</a>
-                      <a class="ure_rsb_link" title="<?php _e("For the help with Turkish translation", 'ure'); ?>" href="http://ben.muhammed.im/">Muhammed YILDIRIM</a>
-                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/sadri.png'; ?>)" target="_blank" title="<?php _e("For the help with Turkish translation", 'ure'); ?>" href="http://www.faydaliweb.com">Sadri Ercan</a>
-                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/cartaca.png'; ?>)" target="_blank" title="<?php _e("For the help with Turkish translation", 'ure'); ?>" href="http://www.kartaca.com">Can KAYA</a>
+                      <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/muhammed.png'; ?>)" target="_blank" title="<?php _e("For the help with Turkish translation", 'ure'); ?>" href="http://ben.muhammed.im/">Muhammed YILDIRIM</a>
                       <hr />
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/fullthrottle.png'; ?>)" target="_blank" title="<?php _e("For the code to hide administrator role", 'ure'); ?>" href="http://fullthrottledevelopment.com/how-to-hide-the-adminstrator-on-the-wordpress-users-screen">FullThrottle</a>
                       <a class="ure_rsb_link" style="background-image:url(<?php echo URE_PLUGIN_URL.'/images/lorenzo.png'; ?>)" target="_blank" title="<?php _e("For the code enhancement suggestion", 'ure'); ?>" href="http://www.extera.com">Lorenzo Nicoletti</a>
@@ -247,10 +272,9 @@ ure_showMessage($mess);
 											<?php _e('Do you wish to see your name with link to your site here? You are welcome! Your help with translation and new ideas are very appreciated.', 'ure'); ?>
 									<?php ure_displayBoxEnd(); ?>
                       </div>
-						</div>
 					</div>
           <div class="has-sidebar" >
-            <form method="post" action="<?php echo URE_PARENT; ?>?page=user-role-editor.php" onsubmit="return ure_onSubmit();">
+            <form id="ure_form" method="post" action="<?php echo URE_PARENT; ?>?page=user-role-editor.php" onsubmit="return ure_onSubmit();">
               <?php
               settings_fields('ure-options');
               ?>
@@ -263,6 +287,6 @@ ure_showMessage($mess);
               }
               ?>
             </form>
-          </div>
+          </div>          
         </div>
 
