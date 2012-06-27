@@ -12,8 +12,8 @@ if (!function_exists("get_option")) {
 
 $ure_siteURL = get_site_url();
 $urePluginDirName = substr(strrchr(dirname(__FILE__), DIRECTORY_SEPARATOR), 1);
-
-define('URE_PLUGIN_URL', WP_PLUGIN_URL.'/'.$urePluginDirName);
+$ureSSLURL = plugins_url();
+define('URE_PLUGIN_URL', $ureSSLURL.'/'.$urePluginDirName);
 define('URE_PLUGIN_DIR', WP_PLUGIN_DIR.'/'.$urePluginDirName);
 define('URE_WP_ADMIN_URL', $ure_siteURL.'/wp-admin');
 define('URE_ERROR', 'Error is encountered');

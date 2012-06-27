@@ -318,7 +318,7 @@ function ecpt_export_datepicker_ui_scripts() {
 }
 function ecpt_export_datepicker_ui_styles() {
 	global $ecpt_base_dir;
-	wp_enqueue_style('jquery-ui-css', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css', false, '1.8', 'all');
+	wp_enqueue_style('jquery-ui-css', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css', false, '1.8', 'all');
 }
 
 // these are for newest versions of WP

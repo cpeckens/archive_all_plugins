@@ -245,8 +245,7 @@ function ure_settings_menu() {
 // end of ure_settings_menu()
 
 function ure_adminCssAction() {
-
-  wp_enqueue_style('ure_admin_css', URE_PLUGIN_URL.'/css/ure-admin.css', array(), false, 'screen');
+  wp_enqueue_style('ure_admin_css', plugins_url('/css/ure-admin.css', __FILE__), array(), false, 'screen'); //Change CMP - Enqueue script properly for SSL
 
 }
 // end of ure_adminCssAction()
