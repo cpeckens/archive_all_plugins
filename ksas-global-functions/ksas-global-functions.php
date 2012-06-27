@@ -48,7 +48,7 @@ License: GPL2
     add_filter('the_generator', 'complete_version_removal');
 
 //removes admin bar from front end
-	add_filter( 'show_admin_bar', '__return_false' );
+	/* add_filter( 'show_admin_bar', '__return_false' ); */
 
 //remove unneccessary classes for navigation menus
 	add_filter('nav_menu_css_class', 'ksasaca_css_attributes_filter', 100, 1);
@@ -349,5 +349,50 @@ if(!function_exists('ecpt_format_date')) {
 		return $date;
 	}
 }
+
+/*****************RESPONSIVE IMAGES - REMOVES WIDTH/HEIGHT ATTRIBUTES FROM IMAGE INSERT*****************************/
+function ksas_responsive_images( $value = false, $id, $size ) {
+    if ( !wp_attachment_is_image($id) )
+        return false;
+
+    $img_url = wp_get_attachment_url($id);
+    $is_intermediate = false;
+    $img_url_basename = wp_basename($img_url);
+
+    // try for a new style intermediate size
+    if ( $intermediate = image_get_intermediate_size($id, $size) ) {
+        $img_url = str_replace($img_url_basename, $intermediate['file'], $img_url);
+        $is_intermediate = true;
+    }
+    elseif ( $size == 'thumbnail' ) {
+        // Fall back to the old thumbnail
+        if ( ($thumb_file = wp_get_attachment_thumb_file($id)) && $info = getimagesize($thumb_file) ) {
+            $img_url = str_replace($img_url_basename, wp_basename($thumb_file), $img_url);
+            $is_intermediate = true;
+        }
+    }
+
+    // We have the actual image size, but might need to further constrain it if content_width is narrower
+    if ( $img_url) {
+        return array( $img_url, 0, 0, $is_intermediate );
+    }
+    return false;
+}
+
+add_filter( 'image_downsize', 'ksas_responsive_images', 1, 3 );
+
+/*****************REMOVE UNWANTED WIDGETS*****************************/
+
+function unregister_default_wp_widgets() {
+	unregister_widget('WP_Widget_Pages');
+	unregister_widget('WP_Widget_Calendar');
+	unregister_widget('WP_Widget_Archives');
+	unregister_widget('WP_Widget_Meta');
+	unregister_widget('WP_Widget_Categories');
+	unregister_widget('WP_Widget_Recent_Comments');
+	unregister_widget('WP_Widget_RSS');
+	unregister_widget('WP_Widget_Tag_Cloud');
+}
+add_action('widgets_init', 'unregister_default_wp_widgets', 1);
 
 ?>
