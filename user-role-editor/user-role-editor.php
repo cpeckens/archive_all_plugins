@@ -192,7 +192,8 @@ function ure_init() {
   // by other users with URE_KEY_CAPABILITY capability
 	if (!ure_is_admin($user_id)) {
     // Exclude administrator role from edit list.
-    add_filter('editable_roles', 'ure_excludeAdminRole');
+    // Allow superadmins to edit/copy the admin role
+    if (!is_super_admin()) add_filter('editable_roles', 'ure_excludeAdminRole');
     // Enqueue jQuery
     add_action('admin_enqueue_scripts' , 'ure_admin_jquery' );
     // prohibit any actions with user who has Administrator role
