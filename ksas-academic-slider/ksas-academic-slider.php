@@ -74,7 +74,8 @@ $sliderinfo_2_metabox = array(
 					'class' 		=> 'ecpt_slideimage',
 					'type' 			=> 'upload',
 					'rich_editor' 	=> 1,			
-					'max' 			=> 0													
+					'max' 			=> 0,
+					'std'			=> ''													
 				),
 															
 				array(
@@ -85,7 +86,8 @@ $sliderinfo_2_metabox = array(
 					'type' 			=> 'radio',
 					'rich_editor' 	=> 1,			
 					'options' => array('blueslide','yellowslide','greenslide'),
-					'max' 			=> 0													
+					'max' 			=> 0,
+					'std'			=> ''													
 				),
 															
 				array(
@@ -95,7 +97,8 @@ $sliderinfo_2_metabox = array(
 					'class' 		=> 'ecpt_urldestination',
 					'type' 			=> 'text',
 					'rich_editor' 	=> 0,			
-					'max' 			=> 0													
+					'max' 			=> 0,
+					'std'			=> ''													
 				),
 															
 				array(
@@ -105,7 +108,8 @@ $sliderinfo_2_metabox = array(
 					'class' 		=> 'ecpt_button',
 					'type' 			=> 'checkbox',
 					'rich_editor' 	=> 1,			
-					'max' 			=> 0													
+					'max' 			=> 0,
+					'std'			=> ''													
 				),
 												)
 );			
