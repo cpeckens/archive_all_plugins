@@ -228,174 +228,89 @@ function ecpt_pullquote_7_save($post_id) {
 //register widgets
 add_action('widgets_init', 'ksas_register_profile_widgets');
 	function ksas_register_profile_widgets() {
-		register_widget('Undergrad_Profile_Widget');
-		register_widget('Graduate_Profile_Widget');
-		register_widget('Spotlight_Widget');
+		register_widget('Profile_Widget');
 	}
-// Define undergrad student profile widget
-class Undergrad_Profile_Widget extends WP_Widget {
-
-	function Undergrad_Profile_Widget() {
-		$widget_ops = array('classname' => 'widget_undergrad_profile', 'description' => __( "Undergrad Student Profile") );
-		$this->WP_Widget('undergrad-profile-widget', 'Undergrad Student Profile', $widget_ops);
+class Profile_Widget extends WP_Widget {
+	function Profile_Widget() {
+		$widget_options = array( 'classname' => 'ksas_profile', 'description' => __('Displays a random profile', 'ksas_profile') );
+		$control_options = array( 'width' => 300, 'height' => 350, 'id_base' => 'ksas_profile-widget' );
+		$this->WP_Widget( 'ksas_profile-widget', __('Bulletin Board', 'ksas_profile'), $widget_options, $control_options );
 	}
 
+	/* Widget Display */
 	function widget( $args, $instance ) {
-		extract($args);
-		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
+		extract( $args );
 
+		/* Our variables from the widget settings. */
+		$title = apply_filters('widget_title', $instance['title'] );
+		$category_choice = $instance['category_choice'];
 		echo $before_widget;
+
+		/* Display the widget title if one was input (before and after defined by themes). */
 		if ( $title )
-			echo $before_title . $title . $after_title;                     
-	
-
-		global $post; ?>
-		<?php $undergrad_profile_query = new WP_Query('post-type=profiles&profiletype=undergraduate-profile&orderby=rand&posts_per_page=1'); ?>
-					<?php while ($undergrad_profile_query->have_posts()) : $undergrad_profile_query->the_post(); ?>           
-    	<div class="profile_box">
-    	<div class="spotlight"></div>
-		<a href="<?php the_permalink() ?>"><img src="<?php the_post_thumbnail('thumbnail') ?>" /></a>
-    	<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-    	<p><?php echo get_post_meta($post->ID, 'ecpt_pull_quote', true); ?></p>
-    	</div>
-	
-	
-	<?php endwhile; ?>
-
-
-
-<?php		echo $after_widget;
-
+			echo $before_title . $title . $after_title;
+			global $switched;
+		$bulletin_query = new WP_Query(array(
+					'post_type' => 'profile',
+					'profiletype' => $category_choice,
+					'orderby' => 'rand'
+					'posts_per_page' => 1));
+		if ( $bulletin_query->have_posts() ) :  while ($bulletin_query->have_posts()) : $bulletin_query->the_post(); ?>
+				<article class="row">
+					<div class="twelve columns">
+						<a href="<?php the_permalink(); ?>">
+							<p><b><?php the_title(); ?></b></br>
+							<?php echo get_post_meta($post->ID, 'ecpt_pull_quote', true); ?></p>
+						</a>
+					</div>
+				</article>
+		<?php endwhile; endif; echo $after_widget;
 	}
 
-	function form( $instance ) {
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
-		$title = $instance['title'];
-?>
-		
-<?php
-	}
-
+	/* Update/Save the widget settings. */
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		$new_instance = wp_parse_args((array) $new_instance, array( 'title' => ''));
-		$instance['title'] = strip_tags($new_instance['title']);
+
+		/* Strip tags for title and name to remove HTML (important for text inputs). */
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['category_choice'] = $new_instance['category_choice'];
+
 		return $instance;
 	}
 
-}
-
-
-?>
-<?php 
-
-// Define graduate student profile widget
-class Graduate_Profile_Widget extends WP_Widget {
-
-	function Graduate_Profile_Widget() {
-		$widget_ops = array('classname' => 'widget_graduate_profile', 'description' => __( "Graduate Student Profile") );
-		$this->WP_Widget('grad-profile-widget', 'Graduate Student Profile', $widget_ops);
-	}
-
-	function widget( $args, $instance ) {
-		extract($args);
-		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
-
-		echo $before_widget;
-		if ( $title )
-			echo $before_title . $title . $after_title;                     
-	
-
-		global $post; ?>
-		<?php $graduate_profile_query = new WP_Query('post-type=profile&profiletype=graduate-profile&orderby=rand&posts_per_page=1'); ?>
-					<?php while ($graduate_profile_query->have_posts()) : $graduate_profile_query->the_post(); ?>
-         <?php // get_the_ID(); ?>
-         <?php //$profileid = $post->ID; ?>               
-    	<div class="profile_box">
-    	<div class="spotlight"></div>
-		<a href="<?php the_permalink() ?>"><img src="<?php the_post_thumbnail('thumbnail') ?>" /></a>
-    	<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-    	<p><?php echo get_post_meta($post->ID, 'ecpt_pull_quote', true); ?></p>
-    	</div>
-	
-	
-	<?php endwhile; ?>
-
-
-
-<?php echo $after_widget;
-
-	}
-
+	/* Widget Options */
 	function form( $instance ) {
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
-		$title = $instance['title'];
-?>
-		
-<?php
+
+		/* Set up some default widget settings. */
+		$defaults = array( 'title' => __('Bulletin Board', 'ksas_profile'), 'quantity' => __('3', 'ksas_profile'), 'category_choice' => '1' );
+		$instance = wp_parse_args( (array) $instance, $defaults ); ?>
+
+		<!-- Widget Title: Text Input -->
+		<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e('Title:', 'hybrid'); ?></label>
+			<input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" style="width:100%;" />
+		</p>
+
+
+		<!-- Choose Profile Type: Select Box -->
+		<p>
+			<label for="<?php echo $this->get_field_id( 'category_choice' ); ?>"><?php _e('Choose Profile Type:', 'ksas_profile'); ?></label> 
+			<select id="<?php echo $this->get_field_id( 'category_choice' ); ?>" name="<?php echo $this->get_field_name( 'category_choice' ); ?>" class="widefat" style="width:100%;">
+			<?php global $wpdb;
+				$categories = get_categories(array(
+								'orderby'                  => 'name',
+								'order'                    => 'ASC',
+								'hide_empty'               => 1,
+								'taxonomy' => 'profiletype'));
+		    foreach($categories as $category){
+		    	$category_choice = $category->slug;
+		        $category_title = $category->name; ?>
+		       <option value="<?php echo $category_choice; ?>" <?php if ( $category_choice == $instance['category_choice'] ) echo 'selected="selected"'; ?>><?php echo $category_title; ?></option>
+		    <?php } ?>
+			</select>
+		</p>
+	<?php
 	}
-
-	function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$new_instance = wp_parse_args((array) $new_instance, array( 'title' => ''));
-		$instance['title'] = strip_tags($new_instance['title']);
-		return $instance;
-	}
-
-}
-// Define spotlight widget
-class Spotlight_Widget extends WP_Widget {
-
-	function Spotlight_Widget() {
-		$widget_ops = array('classname' => 'widget_spotlight', 'description' => __( "Spotlight Widget") );
-		$this->WP_Widget('spotlight-widget', 'Spotlight Widget', $widget_ops);
-	}
-
-	function widget( $args, $instance ) {
-		extract($args);
-		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
-
-		echo $before_widget;
-		if ( $title )
-			echo $before_title . $title . $after_title;                     
-	
-
-		global $post; ?>
-		<?php $spotlight_query = new WP_Query('post-type=profile&profiletype=spotlight&orderby=rand&posts_per_page=1'); ?>
-					<?php while ($spotlight_query->have_posts()) : $spotlight_query->the_post(); ?>
-         <?php // get_the_ID(); ?>
-         <?php //$profileid = $post->ID; ?>               
-    	<div class="profile_box">
-    	<div class="spotlight"></div>
-		<a href="<?php the_permalink() ?>"><img src="<?php the_post_thumbnail('thumbnail') ?>" /></a>
-    	<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-    	<p><?php echo get_post_meta($post->ID, 'ecpt_pull_quote', true); ?></p>
-    	</div>
-	
-	
-	<?php endwhile; ?>
-
-
-
-<?php echo $after_widget;
-
-	}
-
-	function form( $instance ) {
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
-		$title = $instance['title'];
-?>
-		
-<?php
-	}
-
-	function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$new_instance = wp_parse_args((array) $new_instance, array( 'title' => ''));
-		$instance['title'] = strip_tags($new_instance['title']);
-		return $instance;
-	}
-
 }
 
 ?>
